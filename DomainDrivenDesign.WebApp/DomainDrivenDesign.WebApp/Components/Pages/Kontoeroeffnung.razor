@@ -1,0 +1,252 @@
+﻿@page "/girokonto-erstellen"
+@using DomainDrivenDesign.Helpers.Results
+@using DomainDrivenDesign.WebApp.Models;
+@using DomainDrivenDesign.WebApp.Models.Kontoeroeffnung
+@rendermode InteractiveServer
+@inject HttpClient HttpClient
+@inject ILogger<Kontoeroeffnung> logger
+@inject IHttpClientFactory HttpClientFactory
+
+<h3>Kontoeröffnung</h3>
+
+<div class="container">
+    <div>
+        <h4>Schritt 1: Kundenkonto erstellen</h4>
+        <EditForm Model="kundeDto" OnValidSubmit="CreateKunde" FormName="kundeForm">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group">
+                <label for="vorname">Vorname:</label>
+                <InputText id="vorname" @bind-Value="kundeDto.Vorname" />
+                <ValidationMessage For="() => kundeDto.Vorname" />
+            </div>
+
+            <div class="form-group">
+                <label for="nachname">Nachname:</label>
+                <InputText id="nachname" @bind-Value="kundeDto.Nachname" />
+                <ValidationMessage For="() => kundeDto.Nachname" />
+            </div>
+
+            <button type="submit" class="btn">Kunde erstellen</button>
+
+            @if (!string.IsNullOrWhiteSpace(errorMessageKunde))
+            {
+                <div style="color: red;">Fehler: @errorMessageKunde</div>
+            }
+
+        </EditForm>
+    </div>
+
+    <div>
+        <h4>Schritt 2: Girokonto erstellen</h4>
+        <EditForm Model="@girokontoDto" OnValidSubmit="CreateGirokonto" FormName="girokontoForm">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group">
+                <label for="kundennummer">Kundennummer:</label>
+                <InputText id="kundennummer" @bind-Value="girokontoDto.Kundennummer" />
+                <ValidationMessage For="@(() => girokontoDto.Kundennummer)" />
+            </div>
+
+            <div class="form-group">
+                <label for="iban">IBAN:</label>
+                <InputText id="iban" @bind-Value="girokontoDto.IBAN" />
+                <ValidationMessage For="@(() => girokontoDto.IBAN)" />
+            </div>
+
+            <div class="form-group">
+                <label for="anfanglicherKontostand">Anfänglicher Kontostand:</label>
+                <InputNumber id="anfanglicherKontostand" @bind-Value="girokontoDto.Kontostand" />
+                <ValidationMessage For="@(() => girokontoDto.Kontostand)" />
+            </div>
+
+            <button type="submit" class="btn">Girokonto erstellen</button>
+
+            @if (!string.IsNullOrWhiteSpace(errorMessageGirokonto))
+            {
+                <div style="color: red;">Fehler: @errorMessageGirokonto</div>
+            }
+        </EditForm>
+    </div>
+
+    <div>
+        <h4>Liste der Kunden</h4>
+        <ul>
+            @if (!string.IsNullOrWhiteSpace(errorMessageKundenListe))
+            {
+                <div style="color: red;">Fehler: @errorMessageKundenListe</div>
+            }
+            else if (kundenListe != null)
+            {
+                foreach (var kunde in kundenListe)
+                {
+                    <li>Kundennummer: <code>@kunde.Kundennummer</code> - @kunde.Vorname @kunde.Nachname</li>
+                }
+            }
+            else
+            {
+                <li>Lade Kunden...</li>
+            }
+        </ul>
+    </div>
+
+    <div>
+        <h4>Liste der Girokonten</h4>
+        <ul>
+            @if (!string.IsNullOrWhiteSpace(errorMessageGirokontoListe))
+            {
+                <div style="color: red;">Fehler: @errorMessageGirokontoListe</div>
+            }
+            else if (girokontenListe != null)
+            {
+                foreach (var girokonto in girokontenListe)
+                {
+                    <li>IBAN: <code>@girokonto.IBAN</code> - Kundennummer: <code>@girokonto.Kundennummer</code> - Kontostand: <code>@girokonto.Kontostand.ToString("N2") €</code></li>
+                }
+            }
+            else
+            {
+                <li>Lade Girokonten...</li>
+            }
+        </ul>
+    </div>
+</div>
+
+@code {
+    private string errorMessageKunde = string.Empty;
+    private string errorMessageGirokonto = string.Empty;
+    private string errorMessageKundenListe = string.Empty;
+    private string errorMessageGirokontoListe = string.Empty;
+
+    private Kunde kundeDto = new Kunde();
+    private Girokonto girokontoDto = new Girokonto();
+    private List<Kunde> kundenListe = new List<Kunde>();
+    private List<Girokonto> girokontenListe = new List<Girokonto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadKunden();
+        await LoadGirokonten();
+    }
+
+    private async Task LoadKunden()
+    {
+        var client = HttpClientFactory.CreateClient("BackendApi");
+
+        try
+        {
+            var result = await client.GetFromJsonAsync<Result<List<Kunde>>>("api/kontoeroeffnung/kunden");
+
+            ArgumentNullException.ThrowIfNull(result, nameof(Result));
+
+            if (result.IsFailure)
+            {
+                logger.LogError(result.Error);
+                errorMessageKundenListe = result.Error.Message;
+                return;
+            }
+
+            ArgumentNullException.ThrowIfNull(result.Value, nameof(kundenListe));
+
+            kundenListe = result.Value;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError($"Fehler beim Laden der Kunden: {ex.Message}");
+        }
+    }
+
+    private async Task LoadGirokonten()
+    {
+        var client = HttpClientFactory.CreateClient("BackendApi");
+
+        try
+        {
+            var result = await client.GetFromJsonAsync<Result<List<Girokonto>>>("api/kontoeroeffnung/girokonten");
+
+            ArgumentNullException.ThrowIfNull(result, nameof(Result));
+
+            if (result.IsFailure)
+            {
+                logger.LogError(result.Error);
+                errorMessageGirokontoListe = result.Error.Message;
+                return;
+            }
+
+            ArgumentNullException.ThrowIfNull(result.Value, nameof(girokontenListe));
+
+            girokontenListe = result.Value;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError($"Fehler beim Laden der Girokonten: {ex.Message}");
+        }
+    }
+
+    private async Task CreateKunde(EditContext context)
+    {
+        errorMessageKunde = string.Empty;
+        var client = HttpClientFactory.CreateClient("BackendApi");
+
+        try
+        {
+            var formKundendaten = context.Model as Kunde;
+            var response = await client.PostAsJsonAsync("api/kontoeroeffnung/create/kunde", formKundendaten);
+            var result = await response.Content.ReadFromJsonAsync<Result<Kunde>>();
+
+            ArgumentNullException.ThrowIfNull(result, nameof(Result));
+
+            if (result.IsFailure)
+            {
+                logger.LogError(result.Error);
+                errorMessageKunde = result.Error;
+                return;
+            }
+
+            ArgumentNullException.ThrowIfNull(result.Value, nameof(Kunde));            
+            logger.LogInformation($"Kunde erstellt: {result.Value.Kundennummer}");
+            girokontoDto.Kundennummer = result.Value.Kundennummer;
+            girokontoDto.IBAN = "DE12345678" + result.Value.Kundennummer;
+
+            kundeDto = new Kunde();
+            await LoadKunden();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError($"Fehler beim Erstellen des Kunden: {ex.Message}");
+        }
+    }
+
+    private async Task CreateGirokonto(EditContext context)
+    {
+        errorMessageGirokonto = string.Empty;
+        var client = HttpClientFactory.CreateClient("BackendApi");
+
+        try
+        {
+            var formGirokonto = context.Model as Girokonto;
+            var response = await client.PostAsJsonAsync("api/kontoeroeffnung/create/girokonto", formGirokonto);
+            var result = await response.Content.ReadFromJsonAsync<Result<Girokonto>>();
+
+            ArgumentNullException.ThrowIfNull(result, nameof(Result));
+
+            if (result.IsFailure)
+            {
+                logger.LogError(result.Error);
+                errorMessageKunde = result.Error;
+                return;
+            }
+
+            ArgumentNullException.ThrowIfNull(result.Value, nameof(Girokonto));
+            logger.LogInformation($"Girokonto erstellt: {result.Value.IBAN}");
+            girokontoDto = new Girokonto();
+            await LoadGirokonten();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError($"Fehler beim Erstellen des Girokontos: {ex.Message}");
+        }
+    }
+}
