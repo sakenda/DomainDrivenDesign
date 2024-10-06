@@ -2,7 +2,7 @@
 using DomainDrivenDesign.Domain.Kontoeroeffnung;
 using DomainDrivenDesign.Domain.ValueObjects;
 using DomainDrivenDesign.Helpers.Mappers;
-using DomainDrivenDesign.Persistence.Kontoeroeffnung;
+using DomainDrivenDesign.Persistance.Models.Common;
 
 public class KundeToKundeDtoMapper : BaseMapper<Kunde, KundeDto>
 {

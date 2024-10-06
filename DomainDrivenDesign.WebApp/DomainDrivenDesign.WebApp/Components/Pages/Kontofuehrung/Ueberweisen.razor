@@ -1,0 +1,92 @@
+﻿@page "/ueberweisen"
+@rendermode InteractiveServer
+@using DomainDrivenDesign.Helpers.Results
+@using System.ComponentModel.DataAnnotations
+@using System.Text.Json
+@using DomainDrivenDesign.WebApp.Models.Kontofuehrung
+@inject ILogger<Ueberweisen> logger
+@inject IHttpClientFactory HttpClientFactory
+
+<h3>Geld Überweisen</h3>
+
+<EditForm Model="@ueberweisenModel" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="vonIban">Von IBAN</label>
+        <InputText id="vonIban" @bind-Value="@ueberweisenModel.VonIban" class="form-control" />
+        <ValidationMessage For="@(() => ueberweisenModel.VonIban)" />
+    </div>
+
+    <div class="form-group">
+        <label for="nachIban">Nach IBAN</label>
+        <InputText id="nachIban" @bind-Value="@ueberweisenModel.NachIban" class="form-control" />
+        <ValidationMessage For="@(() => ueberweisenModel.NachIban)" />
+    </div>
+
+    <div class="form-group">
+        <label for="betrag">Betrag</label>
+        <InputNumber id="betrag" @bind-Value="@ueberweisenModel.Betrag" class="form-control" />
+        <ValidationMessage For="@(() => ueberweisenModel.Betrag)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Überweisen</button>
+</EditForm>
+
+@if (result != null)
+{
+    <div class="alert @(result.IsSuccess ? "alert-success" : "alert-danger")">
+        @if (result.IsSuccess)
+        {
+            <div>Überweisung wurde erfolgreich durchgeführt!</div>
+        }
+        else
+        {
+            @result.Error.Message            
+        }
+    </div>
+}
+
+@code {
+
+    private UeberweisenModel ueberweisenModel = new UeberweisenModel();
+    private Result<decimal>? result;
+
+    private async Task HandleValidSubmit()
+    {
+        var client = HttpClientFactory.CreateClient("BackendApi");
+
+        try
+        {
+            var response = await client.PostAsJsonAsync("api/kontofuehrung/ueberweisen", ueberweisenModel);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                // Log error
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                result = Result<decimal>.Failure(new Error("Ueberweisen.NotSuccessfulStatuscode", errorMessage));
+                return;
+            }
+
+            // Deserialize the response content to Result<decimal>
+            var content = await response.Content.ReadAsStringAsync();
+            result = JsonSerializer.Deserialize<Result<decimal>>(content, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+            if (result == null || result.IsFailure)
+            {
+                logger.LogError(result?.Error?.Message ?? "Unbekannter Fehler aufgetreten.");
+                return;
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError($"Fehler beim Überweisen: {ex.Message}");
+            result = Result<decimal>.Failure(new Error("Ueberweisen.Error", $"Fehler: {ex.Message}"));
+        }
+    }
+
+}

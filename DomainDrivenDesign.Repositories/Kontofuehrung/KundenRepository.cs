@@ -1,12 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DomainDrivenDesign.Persistance.Database;
+using DomainDrivenDesign.Persistance.Models.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace DomainDrivenDesign.Persistance.Kontofuehrung
 {
     public class KundeRepository
     {
-        private readonly KontofuehrungDbContext _context;
+        private readonly BankDbContext _context;
 
-        public KundeRepository(KontofuehrungDbContext context)
+        public KundeRepository(BankDbContext context)
         {
             _context = context;
         }

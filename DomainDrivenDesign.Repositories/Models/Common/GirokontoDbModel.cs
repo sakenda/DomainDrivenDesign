@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DomainDrivenDesign.Persistence.Kontoeroeffnung;
+namespace DomainDrivenDesign.Persistance.Models.Common;
 
-public record GirokontoDbModel
+public class GirokontoDbModel
 {
     [Key]
     public string IBAN { get; init; }
@@ -11,7 +11,7 @@ public record GirokontoDbModel
     public string Kundennummer { get; init; }
 
     [Required]
-    public decimal Kontostand { get; init; }
+    public decimal Kontostand { get; set; }
 
     public GirokontoDbModel(string iBAN, string kundennummer, decimal kontostand)
     {
@@ -19,5 +19,4 @@ public record GirokontoDbModel
         Kundennummer = kundennummer;
         Kontostand = kontostand;
     }
-
 }

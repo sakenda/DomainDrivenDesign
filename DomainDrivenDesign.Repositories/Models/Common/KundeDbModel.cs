@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DomainDrivenDesign.Persistance.Kontofuehrung;
+namespace DomainDrivenDesign.Persistance.Models.Common;
 
-public record KundeDbModel
+public class KundeDbModel
 {
     [Key]
     public string Kundennummer { get; init; }
@@ -21,5 +21,4 @@ public record KundeDbModel
         Vorname = vorname;
         Nachname = nachname;
     }
-
 }

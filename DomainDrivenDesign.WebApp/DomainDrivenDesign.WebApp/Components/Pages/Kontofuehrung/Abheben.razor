@@ -1,0 +1,54 @@
+﻿@page "/abheben"
+@rendermode InteractiveServer
+@using DomainDrivenDesign.Helpers.Results
+@using System.ComponentModel.DataAnnotations
+@inject ILogger<Abheben> logger
+@inject IHttpClientFactory HttpClientFactory
+
+<h3>Geld Abheben</h3>
+
+<EditForm Model="@abhebenModel" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="iban">IBAN</label>
+        <InputText id="iban" @bind-Value="@abhebenModel.Iban" class="form-control" />
+        <ValidationMessage For="@(() => abhebenModel.Iban)" />
+    </div>
+
+    <div class="form-group">
+        <label for="betrag">Betrag</label>
+        <InputNumber id="betrag" @bind-Value="@abhebenModel.Betrag" class="form-control" />
+        <ValidationMessage For="@(() => abhebenModel.Betrag)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Abheben</button>
+</EditForm>
+
+@if (result != null)
+{
+    <div class="alert @(result.IsSuccess ? "alert-success" : "alert-danger")">
+        @result.Error.Message
+    </div>
+}
+
+@code {
+    private AbhebenModel abhebenModel = new AbhebenModel();
+    private Result<decimal>? result;
+
+    private async Task HandleValidSubmit()
+    {
+        // result = await KontofuehrungService.AbhebenAsync(abhebenModel.Iban, abhebenModel.Betrag);
+    }
+
+    public class AbhebenModel
+    {
+        [Required(ErrorMessage = "IBAN ist erforderlich.")]
+        public string Iban { get; set; }
+
+        [Required(ErrorMessage = "Betrag ist erforderlich.")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Der Betrag muss größer als 0 sein.")]
+        public decimal Betrag { get; set; }
+    }
+}

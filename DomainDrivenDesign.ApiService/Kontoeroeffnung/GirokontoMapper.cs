@@ -2,6 +2,7 @@
 using DomainDrivenDesign.Domain.Shared;
 using DomainDrivenDesign.Domain.ValueObjects;
 using DomainDrivenDesign.Helpers.Mappers;
+using DomainDrivenDesign.Persistance.Models.Common;
 using DomainDrivenDesign.Persistence.Kontoeroeffnung;
 
 namespace DomainDrivenDesign.Application.Kontoeroeffnung;
@@ -27,7 +28,7 @@ public class GirokontoDbToGirokontoDtoMapper : BaseMapper<GirokontoDbModel, Giro
 {
     protected override GirokontoDto DefaultMapToOutput(GirokontoDbModel inputValue)
     {
-        return new GirokontoDto(inputValue.Kundennummer, inputValue.IBAN, inputValue.Kontostand);
+        return new GirokontoDto(inputValue.IBAN, inputValue.Kundennummer, inputValue.Kontostand);
     }
 
     protected override GirokontoDbModel DefaultMapToInput(GirokontoDto outputValue)

@@ -1,12 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DomainDrivenDesign.Persistance.Database;
+using DomainDrivenDesign.Persistance.Models.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace DomainDrivenDesign.Persistence.Kontoeroeffnung;
 
 public class KundenRepository
 {
-    private readonly KontoeroeffnungDbContext _context;
+    private readonly BankDbContext _context;
 
-    public KundenRepository(KontoeroeffnungDbContext context)
+    public KundenRepository(BankDbContext context)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }

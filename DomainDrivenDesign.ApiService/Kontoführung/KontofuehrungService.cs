@@ -19,8 +19,8 @@ public class KontofuehrungService
     {
         try
         {
-            await _girokontoRepository.EinzahlenAsync(iban, betrag);
             var girokonto = await _girokontoRepository.GetGirokontoByIbanAsync(iban);
+            await _girokontoRepository.EinzahlenAsync(girokonto, betrag);
             return Result<decimal>.Success(girokonto.Kontostand);
         }
         catch (Exception)
@@ -33,8 +33,8 @@ public class KontofuehrungService
     {
         try
         {
-            await _girokontoRepository.AbhebenAsync(iban, betrag);
             var girokonto = await _girokontoRepository.GetGirokontoByIbanAsync(iban);
+            await _girokontoRepository.AbhebenAsync(girokonto, betrag);
             return Result<decimal>.Success(girokonto.Kontostand);
         }
         catch (InvalidOperationException)
@@ -55,9 +55,9 @@ public class KontofuehrungService
             var vonGirokonto = await _girokontoRepository.GetGirokontoByIbanAsync(vonIban);
             return Result<decimal>.Success(vonGirokonto.Kontostand);
         }
-        catch (InvalidOperationException)
+        catch (InvalidOperationException ex)
         {
-            return Result<decimal>.Failure(DomainErrors.Kontofuehrung.KontoNichtGefunden);
+            return Result<decimal>.Failure(new Error(nameof(KontofuehrungService.UeberweisenAsync), ex.Message));
         }
         catch (Exception)
         {

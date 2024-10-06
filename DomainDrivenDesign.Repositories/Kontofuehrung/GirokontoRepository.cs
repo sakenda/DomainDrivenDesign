@@ -1,18 +1,21 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DomainDrivenDesign.Persistance.Database;
+using DomainDrivenDesign.Persistance.Models.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace DomainDrivenDesign.Persistance.Kontofuehrung
 {
     public class GirokontoRepository
     {
-        private readonly KontofuehrungDbContext _context;
+        private readonly BankDbContext _context;
 
-        public GirokontoRepository(KontofuehrungDbContext context)
+        public GirokontoRepository(BankDbContext context)
         {
             _context = context;
         }
 
         public async Task<GirokontoDbModel> GetGirokontoByIbanAsync(string iban)
         {
+            var test = _context.Girokonten.ToList();
             return await _context.Girokonten.FindAsync(iban);
         }
 
@@ -21,9 +24,8 @@ namespace DomainDrivenDesign.Persistance.Kontofuehrung
             return await _context.Girokonten.ToListAsync();
         }
 
-        public async Task EinzahlenAsync(string iban, decimal betrag)
+        public async Task EinzahlenAsync(GirokontoDbModel girokonto, decimal betrag)
         {
-            var girokonto = await GetGirokontoByIbanAsync(iban);
             if (girokonto != null)
             {
                 girokonto.Kontostand += betrag;
@@ -31,9 +33,8 @@ namespace DomainDrivenDesign.Persistance.Kontofuehrung
             }
         }
 
-        public async Task AbhebenAsync(string iban, decimal betrag)
+        public async Task AbhebenAsync(GirokontoDbModel girokonto, decimal betrag)
         {
-            var girokonto = await GetGirokontoByIbanAsync(iban);
             if (girokonto != null && girokonto.Kontostand >= betrag)
             {
                 girokonto.Kontostand -= betrag;
@@ -52,8 +53,8 @@ namespace DomainDrivenDesign.Persistance.Kontofuehrung
 
             if (vonGirokonto != null && nachGirokonto != null)
             {
-                await AbhebenAsync(vonIban, betrag);
-                await EinzahlenAsync(nachIban, betrag);
+                await AbhebenAsync(vonGirokonto, betrag);
+                await EinzahlenAsync(nachGirokonto, betrag);
             }
             else
             {

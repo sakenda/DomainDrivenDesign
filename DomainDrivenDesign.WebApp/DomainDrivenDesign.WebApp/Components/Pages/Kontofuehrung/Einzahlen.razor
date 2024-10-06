@@ -1,0 +1,54 @@
+﻿@page "/einzahlen"
+@rendermode InteractiveServer
+@using DomainDrivenDesign.Helpers.Results
+@using System.ComponentModel.DataAnnotations
+@inject ILogger<Einzahlen> logger
+@inject IHttpClientFactory HttpClientFactory
+
+<h3>Geld Einzahlen</h3>
+
+<EditForm Model="@einzahlenModel" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="iban">IBAN</label>
+        <InputText id="iban" @bind-Value="@einzahlenModel.Iban" class="form-control" />
+        <ValidationMessage For="@(() => einzahlenModel.Iban)" />
+    </div>
+
+    <div class="form-group">
+        <label for="betrag">Betrag</label>
+        <InputNumber id="betrag" @bind-Value="@einzahlenModel.Betrag" class="form-control" />
+        <ValidationMessage For="@(() => einzahlenModel.Betrag)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Einzahlen</button>
+</EditForm>
+
+@if (result != null)
+{
+    <div class="alert @(result.IsSuccess ? "alert-success" : "alert-danger")">
+        @result.Error.Message
+    </div>
+}
+
+@code {
+    private EinzahlenModel einzahlenModel = new EinzahlenModel();
+    private Result<decimal>? result;
+
+    private async Task HandleValidSubmit()
+    {
+        // result = await KontofuehrungService.EinzahlenAsync(einzahlenModel.Iban, einzahlenModel.Betrag);
+    }
+
+    public class EinzahlenModel
+    {
+        [Required(ErrorMessage = "IBAN ist erforderlich.")]
+        public string Iban { get; set; }
+
+        [Required(ErrorMessage = "Betrag ist erforderlich.")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Der Betrag muss größer als 0 sein.")]
+        public decimal Betrag { get; set; }
+    }
+}

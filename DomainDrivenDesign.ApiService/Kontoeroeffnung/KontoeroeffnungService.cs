@@ -1,4 +1,5 @@
-﻿using DomainDrivenDesign.Persistence.Kontoeroeffnung;
+﻿using DomainDrivenDesign.Persistance.Models.Common;
+using DomainDrivenDesign.Persistence.Kontoeroeffnung;
 
 namespace DomainDrivenDesign.Application.Kontoeroeffnung;
 

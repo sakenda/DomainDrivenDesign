@@ -33,9 +33,3 @@ public class KontofuehrungController : ControllerBase
     }
 }
 
-public class UeberweisungRequest
-{
-    public string VonIban { get; set; }
-    public string NachIban { get; set; }
-    public decimal Betrag { get; set; }
-}
