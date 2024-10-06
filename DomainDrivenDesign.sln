@@ -21,7 +21,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainDrivenDesign.Domain",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainDrivenDesign.Persistance", "DomainDrivenDesign.Repositories\DomainDrivenDesign.Persistance.csproj", "{66ADA6BA-F982-48DE-8AE2-84F7838BC32C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainDrivenDesign.Helpers", "DomainDrivenDesign.Helpers\DomainDrivenDesign.Helpers.csproj", "{B601CB13-5C08-48D0-963B-DC8A0EAAD063}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainDrivenDesign.Helpers", "DomainDrivenDesign.Helpers\DomainDrivenDesign.Helpers.csproj", "{B601CB13-5C08-48D0-963B-DC8A0EAAD063}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helper", "Helper", "{22CEDED6-4B2F-4DC6-B083-A2F78CE3DD36}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainDrivenDesign.Helpers.Tests", "DomainDrivenDesign.Helpers.Tests\DomainDrivenDesign.Helpers.Tests.csproj", "{86E7DA77-0E71-4DB4-B0B2-5E49C1C03D78}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +57,10 @@ Global
 		{B601CB13-5C08-48D0-963B-DC8A0EAAD063}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B601CB13-5C08-48D0-963B-DC8A0EAAD063}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B601CB13-5C08-48D0-963B-DC8A0EAAD063}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86E7DA77-0E71-4DB4-B0B2-5E49C1C03D78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86E7DA77-0E71-4DB4-B0B2-5E49C1C03D78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86E7DA77-0E71-4DB4-B0B2-5E49C1C03D78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86E7DA77-0E71-4DB4-B0B2-5E49C1C03D78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,6 +71,8 @@ Global
 		{1E047777-B817-4DEE-9D44-F13A6734170D} = {9AB4A4A5-0B83-46BD-80D8-0FB298238AA0}
 		{AC412C6A-8B16-4757-8938-BDA30ABAAC55} = {96BE2960-6533-4411-BA41-378C418E89E5}
 		{66ADA6BA-F982-48DE-8AE2-84F7838BC32C} = {41742CCB-0BB4-454C-972E-3D0391DA16AA}
+		{B601CB13-5C08-48D0-963B-DC8A0EAAD063} = {22CEDED6-4B2F-4DC6-B083-A2F78CE3DD36}
+		{86E7DA77-0E71-4DB4-B0B2-5E49C1C03D78} = {22CEDED6-4B2F-4DC6-B083-A2F78CE3DD36}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {06447C78-85F5-4F93-BB3C-3070A83CCB51}

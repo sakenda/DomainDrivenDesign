@@ -1,9 +1,8 @@
 ﻿using DomainDrivenDesign.Domain.ValueObjects;
-using DomainDrivenDesign.Helpers.ValueObjects;
 
-namespace DomainDrivenDesign.Domain.Kontoeroeffnung;
+namespace DomainDrivenDesign.Domain.Kontofuehrung;
 
-public record Kunde : ValueObject<Kunde>
+public record Kunde
 {
     public Kundennummer Kundennummer { get; init; }
     public string Vorname { get; init; }
@@ -20,11 +19,4 @@ public record Kunde : ValueObject<Kunde>
     }
 
     public override string ToString() => $"{Vorname} {Nachname} (Kundennummer: {Kundennummer})";
-
-    protected override IEnumerable<object> GetEqualityComponents()
-    {
-        yield return Kundennummer;
-        yield return Vorname;
-        yield return Nachname;
-    }
 }

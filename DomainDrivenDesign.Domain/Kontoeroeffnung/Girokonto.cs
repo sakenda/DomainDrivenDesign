@@ -1,9 +1,11 @@
 ﻿
 using DomainDrivenDesign.Domain.Shared;
+using DomainDrivenDesign.Domain.ValueObjects;
+using DomainDrivenDesign.Helpers.ValueObjects;
 
 namespace DomainDrivenDesign.Domain.Kontoeroeffnung;
 
-public record Girokonto
+public record Girokonto : ValueObject<Girokonto>
 {
     public Kunde Kunde { get; init; }
     public Kontonummer Kontonummer { get; init; }
@@ -31,4 +33,9 @@ public record Girokonto
         return $"Girokonto {Kontonummer} von {Kunde}, Kontostand: {Kontostand}";
     }
 
+    protected override IEnumerable<object> GetEqualityComponents()
+    {
+        yield return Kunde;
+        yield return Kontonummer;
+    }
 }

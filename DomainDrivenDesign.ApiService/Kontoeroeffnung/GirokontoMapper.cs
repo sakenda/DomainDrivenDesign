@@ -1,5 +1,6 @@
 ﻿using DomainDrivenDesign.Domain.Kontoeroeffnung;
 using DomainDrivenDesign.Domain.Shared;
+using DomainDrivenDesign.Domain.ValueObjects;
 using DomainDrivenDesign.Helpers.Mappers;
 using DomainDrivenDesign.Persistence.Kontoeroeffnung;
 

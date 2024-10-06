@@ -1,7 +1,6 @@
-﻿
-using DomainDrivenDesign.Domain.Shared;
+﻿using DomainDrivenDesign.Domain.Shared;
 
-namespace DomainDrivenDesign.Domain.Kontoeroeffnung;
+namespace DomainDrivenDesign.Domain.ValueObjects;
 
 public readonly record struct Betrag
 {
